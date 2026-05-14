@@ -120,14 +120,23 @@ func pubKeyCryptoToBLS(pubKey crypto.PublicKey) (*bls.PublicKey, error) {
 	return &pubKeyBLS, nil
 }
 
-// createScalar creates crypto.Scalar from a 32 len byte array
+// createScalar creates crypto.Scalar from a 32 len byte array.
+//
+// ISSUE-054: check the type assertion. The previous code discarded
+// the `ok` bool, so if a non-MCL `crypto.Suite` was passed, `sc` was
+// nil and the next line panicked on `sc.Scalar.SetString(...)`. The
+// sibling `scalarMulSig` (above, line 40-43) already handles this
+// correctly — bringing this site to the same posture.
 func createScalar(suite crypto.Suite, scalarBytes []byte) (crypto.Scalar, error) {
 	if check.IfNil(suite) {
 		return nil, crypto.ErrNilSuite
 	}
 
 	scalar := suite.CreateScalar()
-	sc, _ := scalar.(*mcl.Scalar)
+	sc, ok := scalar.(*mcl.Scalar)
+	if !ok {
+		return nil, crypto.ErrInvalidScalar
+	}
 
 	err := sc.Scalar.SetString(hex.EncodeToString(scalarBytes), 16)
 	if err != nil {

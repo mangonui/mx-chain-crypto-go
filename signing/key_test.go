@@ -1,6 +1,7 @@
 package signing_test
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 	"github.com/multiversx/mx-chain-crypto-go/mock"
 	"github.com/multiversx/mx-chain-crypto-go/signing"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var invalidStr = []byte("invalid key")
@@ -105,12 +107,41 @@ func TestKeyGenerator_GeneratePairNilSuiteShouldPanic(t *testing.T) {
 	assert.Panics(t, func() { kg.GeneratePair() }, "the code did not panic")
 }
 
+func TestKeyGenerator_GeneratePairCheckedNilSuiteShouldErr(t *testing.T) {
+	t.Parallel()
+
+	kg := signing.NewKeyGenerator(nil)
+
+	privateKey, publicKey, err := kg.GeneratePairChecked()
+
+	require.Nil(t, privateKey)
+	require.Nil(t, publicKey)
+	require.ErrorIs(t, err, crypto.ErrNilSuite)
+}
+
 func TestKeyGenerator_GeneratePairGeneratorOK(t *testing.T) {
 	t.Parallel()
 
 	suite := createMockSuite()
 	kg := signing.NewKeyGenerator(suite)
 	privKey, pubKey := kg.GeneratePair()
+
+	sc, _ := privKey.Scalar().(*mock.ScalarMock)
+	po, _ := pubKey.Point().(*mock.PointMock)
+
+	assert.Equal(t, initScalar, sc.X)
+	assert.Equal(t, initScalar*initPointX, po.X)
+	assert.Equal(t, initScalar*initPointY, po.Y)
+}
+
+func TestKeyGenerator_GeneratePairCheckedOK(t *testing.T) {
+	t.Parallel()
+
+	suite := createMockSuite()
+	kg := signing.NewKeyGenerator(suite)
+	privKey, pubKey, err := kg.GeneratePairChecked()
+
+	require.NoError(t, err)
 
 	sc, _ := privKey.Scalar().(*mock.ScalarMock)
 	po, _ := pubKey.Point().(*mock.PointMock)
@@ -251,6 +282,61 @@ func TestPrivateKey_GeneratePublicOK(t *testing.T) {
 
 	expectedResult, _ := marshalPublic(initScalar*initPointX, initScalar*initPointY)
 	assert.Equal(t, expectedResult, pubKeyBytes)
+}
+
+func TestPrivateKey_GeneratePublicCheckedOK(t *testing.T) {
+	t.Parallel()
+
+	suite := createMockSuite()
+	kg := signing.NewKeyGenerator(suite)
+	privKey, _ := kg.GeneratePair()
+	checkedPrivKey, ok := privKey.(crypto.CheckedPrivateKey)
+	require.True(t, ok)
+
+	pubkey, err := checkedPrivKey.GeneratePublicChecked()
+	require.NoError(t, err)
+	pubKeyBytes, err := pubkey.Point().MarshalBinary()
+	require.NoError(t, err)
+
+	expectedResult, _ := marshalPublic(initScalar*initPointX, initScalar*initPointY)
+	assert.Equal(t, expectedResult, pubKeyBytes)
+}
+
+func TestPrivateKey_GeneratePublicCheckedCreatePointForScalarShouldErr(t *testing.T) {
+	t.Parallel()
+
+	expectedErr := errors.New("create point for scalar failed")
+	suite := createMockSuite()
+	suite.CreatePointForScalarStub = func(_ crypto.Scalar) (crypto.Point, error) {
+		return nil, expectedErr
+	}
+	kg := signing.NewKeyGenerator(suite)
+	privKey, err := kg.PrivateKeyFromByteArray([]byte("valid key"))
+	require.NoError(t, err)
+	checkedPrivKey, ok := privKey.(crypto.CheckedPrivateKey)
+	require.True(t, ok)
+
+	pubkey, err := checkedPrivKey.GeneratePublicChecked()
+
+	require.Nil(t, pubkey)
+	require.ErrorIs(t, err, expectedErr)
+}
+
+func TestPrivateKey_GeneratePublicStillPanicsOnCreatePointForScalarFailure(t *testing.T) {
+	t.Parallel()
+
+	expectedErr := errors.New("create point for scalar failed")
+	suite := createMockSuite()
+	suite.CreatePointForScalarStub = func(_ crypto.Scalar) (crypto.Point, error) {
+		return nil, expectedErr
+	}
+	kg := signing.NewKeyGenerator(suite)
+	privKey, err := kg.PrivateKeyFromByteArray([]byte("valid key"))
+	require.NoError(t, err)
+
+	require.Panics(t, func() {
+		_ = privKey.GeneratePublic()
+	})
 }
 
 func TestPrivateKey_SuiteOK(t *testing.T) {

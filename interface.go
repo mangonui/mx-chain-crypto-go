@@ -136,6 +136,12 @@ type KeyGenerator interface {
 	IsInterfaceNil() bool
 }
 
+// CheckedKeyGenerator is an optional extension for key generators that can
+// return construction failures instead of panicking through GeneratePair.
+type CheckedKeyGenerator interface {
+	GeneratePairChecked() (PrivateKey, PublicKey, error)
+}
+
 // Key represents a crypto key - can be either private or public
 type Key interface {
 	// ToByteArray returns the byte array representation of the key
@@ -153,6 +159,12 @@ type PrivateKey interface {
 	GeneratePublic() PublicKey
 	// Scalar returns the Scalar corresponding to this Private Key
 	Scalar() Scalar
+}
+
+// CheckedPrivateKey is an optional extension for private keys that can return
+// point-derivation failures instead of panicking through GeneratePublic.
+type CheckedPrivateKey interface {
+	GeneratePublicChecked() (PublicKey, error)
 }
 
 // PublicKey can be used to encrypt messages

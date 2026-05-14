@@ -80,7 +80,7 @@ func (ed *EncryptedData) Encrypt(data []byte, recipientPubKey crypto.PublicKey, 
 		return err
 	}
 
-	senderPubKey, err := senderPrivateKey.GeneratePublic().ToByteArray()
+	senderPubKey, err := generatePublicBytes(senderPrivateKey)
 	if err != nil {
 		return err
 	}
@@ -95,6 +95,19 @@ func (ed *EncryptedData) Encrypt(data []byte, recipientPubKey crypto.PublicKey, 
 	ed.Identities.Recipient = hex.EncodeToString(recipientPubKeyBytes)
 
 	return nil
+}
+
+func generatePublicBytes(privateKey crypto.PrivateKey) ([]byte, error) {
+	if checkedPrivateKey, ok := privateKey.(crypto.CheckedPrivateKey); ok {
+		publicKey, err := checkedPrivateKey.GeneratePublicChecked()
+		if err != nil {
+			return nil, err
+		}
+
+		return publicKey.ToByteArray()
+	}
+
+	return privateKey.GeneratePublic().ToByteArray()
 }
 
 // Decrypt returns the plain text associated to a ciphertext that was previously encrypted
