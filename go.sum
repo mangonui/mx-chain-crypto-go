@@ -16,14 +16,14 @@ github.com/golang/protobuf v1.5.3/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiu
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/herumi/bls-go-binary v1.28.2 h1:F0AezsC0M1a9aZjk7g0l2hMb1F56Xtpfku97pDndNZE=
-github.com/herumi/bls-go-binary v1.28.2/go.mod h1:O4Vp1AfR4raRGwFeQpr9X/PQtncEicMoOe6BQt1oX0Y=
 github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
+github.com/mangonui/bls-go-binary v0.0.0-20250924002409-446538da6433 h1:vrmef48f4RNfl2g9SCMDt6yKXdrSMyP+Dyk2LDC42P0=
+github.com/mangonui/bls-go-binary v0.0.0-20250924002409-446538da6433/go.mod h1:O4Vp1AfR4raRGwFeQpr9X/PQtncEicMoOe6BQt1oX0Y=
 github.com/mangonui/mx-chain-core-go v0.0.0-20260514035830-0e3a1d482b18 h1:A09oXKsN3/E2iXuQI8rmi0dX6yHHw6TGIqmyjCpxhb8=
 github.com/mangonui/mx-chain-core-go v0.0.0-20260514035830-0e3a1d482b18/go.mod h1:nx8HPC1fvHcXGXNAUQaMXNQWSMgSWcqST+Od76tuCeI=
 github.com/mangonui/mx-chain-logger-go v0.0.0-20260514040119-0a9c9ca2e4eb h1:FzR5XJdtQHB3ftLtJ3wo50SR7HqkfHwvK9/1aX97q/M=

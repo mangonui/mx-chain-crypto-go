@@ -28,3 +28,5 @@ require (
 replace github.com/multiversx/mx-chain-core-go => github.com/mangonui/mx-chain-core-go v0.0.0-20260514035830-0e3a1d482b18
 
 replace github.com/multiversx/mx-chain-logger-go => github.com/mangonui/mx-chain-logger-go v0.0.0-20260514040119-0a9c9ca2e4eb
+
+replace github.com/herumi/bls-go-binary => github.com/mangonui/bls-go-binary v0.0.0-20250924002409-446538da6433
